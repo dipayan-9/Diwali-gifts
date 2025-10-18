@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Diwali Grand Celebration — Premium</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta name="description" content="Diwali Grand Celebration — share to unlock an exclusive gift" />
+  <style>
+    :root{
+      --gold1:#FFD700; --gold2:#FFB347; --gold3:#FF8C00; --accent:#FFEC8B;
+      --deep:#2b0b07; --glass: rgba(255,255,255,0.06);
+      --glass-border: rgba(255,255,255,0.10);
+      --max-w: 1200px;
+      --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      background-color:#0f0504;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+      color:#fff;
+      position:relative;
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* background */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-3;
+      pointer-events:none;
+      background-image:
+        url('background.png'),
+        radial-gradient(ellipse at center, rgba(120,40,10,0.16) 0%, rgba(15,5,4,1) 70%);
+      background-size: cover, 1400px 1400px;
+      background-position: center center, center center;
+      background-repeat: no-repeat, no-repeat;
+    }
+    body::after{
+      content:"";
+      position:fixed; inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.16), rgba(0,0,0,0.46));
+      z-index:-2;
+      pointer-events:none;
+    }
+
+    /* floating lanterns container (kept, but you can disable startLanterns) */
+    #lanterns { position: fixed; inset: 0; pointer-events: none; z-index: 2; overflow: hidden; }
+
+    .lantern { position: absolute; bottom: -14vh; width: 88px; height: 120px; transform-origin: center bottom; opacity: 0; will-change: transform, opacity; filter: drop-shadow(0 18px 44px rgba(0,0,0,0.45)); }
+    .lantern .body { width: 100%; height: 70%; border-radius: 40% 40% 36% 36%; background: linear-gradient(180deg,#ffb86b, #ffc86b 60%, #ff9a3d); display:flex; align-items:center; justify-content:center; position:relative; box-shadow: inset 0 -10px 20px rgba(0,0,0,0.12); }
+    .lantern .neck { width: 36%; height: 18%; background: linear-gradient(180deg,#3d1808, #6b2f12); border-radius: 50%; position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); }
+    .lantern .flame { position: absolute; top: 20%; width: 16px; height: 26px; border-radius: 50% 50% 40% 40%; transform-origin: center bottom; mix-blend-mode: screen; background: radial-gradient(circle at 40% 30%, #fff9d8 0%, #fff1b0 28%, #ffb84d 60%, rgba(255,100,30,0.95) 95%); box-shadow: 0 10px 28px rgba(255,140,20,0.7); animation: lanternFlame 900ms infinite ease-in-out; }
+    .lantern .glow { display:none !important; }
+
+    @keyframes lanternFloat { 0% { transform: translate3d(0,0,0) rotate(-8deg); opacity: 0; } 10% { opacity: 1; } 50% { transform: translate3d(var(--x-shift,0), -60vh, 0) rotate(6deg); } 100% { transform: translate3d(calc(var(--x-shift,0) * 1.2), -120vh, 0) rotate(-6deg); opacity: 0; } }
+    @keyframes lanternFlame { 0% { transform: translateY(0) scaleY(1); opacity: 1; } 50% { transform: translateY(-3px) scaleY(1.12); opacity: 0.95; } 100% { transform: translateY(0) scaleY(1); opacity: 1; } }
+
+    /* Mobile: make main UI full-width while keeping other styles intact */
+    @media (max-width:600px) {
+      body { padding: 10px; }
+      .stage { max-width: 100% !important; width: 100% !important; padding-left: 12px !important; padding-right: 12px !important; }
+      .hero { padding: 18px !important; border-radius: 12px !important; }
+      .grand-wrap { max-width: 100% !important; width: 100% !important; height: 280px !important; }
+      .grand-wrap img { width: 120% !important; height: auto !important; object-fit: cover; object-position:center; }
+    }
+
+    /* MAIN - increased width only, keep grand-wrap height at 360 */
+    .stage{ width:100%; max-width:1200px; z-index:6; display:flex; flex-direction:column; gap:28px; padding:28px; animation: fadeInUp 1s ease-out; }
+    .hero{ width:100%; background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(0,0,0,0.12)); border-radius:22px; border: 1px solid rgba(255,215,0,0.12); padding:40px; display:flex; flex-direction:column; align-items:center; gap:28px; box-shadow: 0 40px 100px rgba(0,0,0,0.7); backdrop-filter: blur(12px); position: relative; overflow: visible; }
+    .grand-wrap{ width:100%; max-width:1100px; height:360px; border-radius:16px; overflow:hidden; display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg, rgba(255,215,0,0.06), rgba(255,140,0,0.04)); padding:14px; box-shadow: 0 16px 60px rgba(0,0,0,0.5); border: 1px solid rgba(255,215,0,0.08); position: relative; }
+    .grand-wrap img{ width:100%; height:100%; object-fit:contain; border-radius:12px; display:block; z-index:2; position:relative; }
+
+    /* subtle "joshna" light effect overlay (CSS-only, very light) */
+    .grand-wrap::after{
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 3;
+      background:
+        radial-gradient(ellipse at 30% 40%, rgba(255,240,180,0.08) 0%, rgba(255,200,80,0.03) 12%, transparent 28%),
+        radial-gradient(ellipse at 70% 60%, rgba(255,240,180,0.06) 0%, rgba(255,180,60,0.02) 10%, transparent 26%);
+      mix-blend-mode: screen;
+      opacity: 0.95;
+      animation: gentlyGlow 4000ms ease-in-out infinite;
+      transition: opacity 220ms ease;
+      will-change: opacity, transform;
+    }
+    @keyframes gentlyGlow { 0% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.02); opacity: 1; } 100% { transform: scale(1); opacity: 0.9; } }
+
+    /* tiny particles - very few, subtle float - low cost */
+    .grand-glow-particles { position:absolute; inset:0; pointer-events:none; z-index:4; overflow:visible; }
+    .grand-glow-particles span { position:absolute; width:6px; height:6px; border-radius:50%; background: radial-gradient(circle, rgba(255,245,200,0.95), rgba(255,200,80,0.7)); opacity:0.0; transform: translateY(0) scale(0.9); will-change: transform, opacity; animation: particleFloat 4200ms linear infinite; filter: blur(0.6px); }
+    .grand-glow-particles span:nth-child(1){ left:12%; top:26%; animation-delay:0ms; }
+    .grand-glow-particles span:nth-child(2){ left:28%; top:58%; animation-delay:420ms; }
+    .grand-glow-particles span:nth-child(3){ left:48%; top:18%; animation-delay:860ms; }
+    .grand-glow-particles span:nth-child(4){ left:68%; top:44%; animation-delay:1280ms; }
+    .grand-glow-particles span:nth-child(5){ left:82%; top:22%; animation-delay:1700ms; }
+    .grand-glow-particles span:nth-child(6){ left:42%; top:66%; animation-delay:2120ms; }
+    @keyframes particleFloat { 0% { transform: translateY(0) scale(0.9); opacity:0; } 10% { opacity:0.8; transform: translateY(-6px) scale(1.0); } 50% { opacity:0.5; transform: translateY(-12px) scale(1.1); } 90% { opacity:0.2; transform: translateY(-18px) scale(0.95); } 100% { opacity:0; transform: translateY(-22px) scale(0.9); } }
+
+    .progress{ width:100%; max-width:760px; display:flex; flex-direction:column; gap:14px; align-items:center; }
+    .progress .label{ display:flex; width:100%; justify-content:space-between; font-size:15px; color:rgba(255,255,255,0.95); font-weight:700; }
+    .bar{ width:100%; height:18px; background: rgba(255,255,255,0.04); border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,0.06); position:relative; }
+    .bar > i{ display:block; height:100%; width:0; background:linear-gradient(90deg,var(--gold1),var(--gold2), var(--gold3)); border-radius:999px; transition: width 420ms cubic-bezier(.2,.9,.2,1); position:relative; overflow:hidden; }
+    .bar > i::after{ content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent); animation: shimmer 2s infinite; }
+    @keyframes shimmer { 0%{ left:-100% } 100%{ left:100% } }
+
+    .actions{ display:flex; gap:18px; align-items:center; flex-wrap:wrap; justify-content:center; width:100%; z-index:6; }
+    .btn{ min-height:64px; padding:16px 28px; border-radius:999px; font-weight:800; border:0; cursor:pointer; display:inline-flex; align-items:center; gap:12px; justify-content:center; box-shadow: 0 14px 40px rgba(0,0,0,0.5); transition: var(--transition); font-size: 17px; position:relative; overflow:hidden; }
+    .btn:focus{ outline:3px solid rgba(255,215,102,0.14); outline-offset:4px; transform:translateY(-2px) }
+    .btn-share{ background:linear-gradient(135deg,#25D366,#128C7E); color:#fff }
+    .btn-claim{ background:linear-gradient(135deg,var(--gold1),var(--gold2), var(--gold3)); color:var(--deep) }
+    .btn-hidden{ display:none }
+    .btn[disabled]{ opacity:0.56; cursor:not-allowed; box-shadow:none; transform:none; }
+    .small{ font-size:15px; color:rgba(255,255,255,0.8); text-align:center; max-width:680px; line-height:1.6 }
+
+    /* Share confirmation modal (fallback for non-WebShare flows) */
+    .share-confirm { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:2100; background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.85)); }
+    .share-confirm .card { width:min(720px,92%); max-width:520px; padding:20px; border-radius:14px; background: linear-gradient(180deg,#fffdf8,#fff6ea); color:#5b3a02; box-shadow:0 40px 120px rgba(0,0,0,0.6); text-align:center; border:2px solid rgba(255,215,0,0.12); }
+    .share-confirm .card p { margin:10px 0 16px 0; font-weight:700; }
+    .share-confirm .actions { display:flex; gap:12px; justify-content:center; margin-top:8px; }
+    .share-confirm .btn-copy { background:rgba(0,0,0,0.08); color:#000; font-weight:800; padding:12px 18px; border-radius:12px; border:0; cursor:pointer; }
+
+    /* welcome / congrats / claim / success same as before */
+    .welcome-modal{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.85); z-index:1200; animation: fadeIn 0.5s ease-out; }
+    .welcome-card{ width:min(840px,92%); max-width:640px; padding:44px; border-radius:22px; background: linear-gradient(135deg, rgba(40,8,8,0.95), rgba(60,12,12,0.92)); border: 1px solid rgba(255,215,0,0.18); box-shadow: 0 50px 140px rgba(0,0,0,0.7); display:flex; flex-direction:column; align-items:center; gap:28px; position:relative; overflow:hidden; }
+    .welcome-card h2{ font-family:"Cinzel",serif; font-size:3.4rem; color:var(--gold1); margin:0; letter-spacing:0.6px; text-align:center; text-shadow:0 0 12px rgba(255,215,0,0.45); }
+    .welcome-close{ padding:14px 28px; border-radius:14px; border:0; background:linear-gradient(135deg,var(--gold1),var(--gold2)); color:var(--deep); font-weight:800; cursor:pointer; transition:var(--transition); box-shadow:0 8px 20px rgba(0,0,0,0.3) }
+
+    .congrats-modal{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.85)); z-index:1500 }
+    .congrats-modal.active{ display:flex }
+    .congrats-card{ width:92%; max-width:920px; border-radius:20px; padding:32px; display:flex; flex-direction:column; align-items:center; gap:18px; background: linear-gradient(180deg, rgba(255,246,220,0.98), rgba(255,240,200,0.98)); box-shadow: 0 50px 140px rgba(0,0,0,0.6); border: 2px solid rgba(255,215,0,0.28); position:relative; overflow:hidden; }
+    .congrats-card h2{ font-family:"Cinzel",serif; font-size:2.8rem; margin:0; color:#6b3d02; text-align:center; }
+    .congrats-sub{ color:#6b3d02; font-weight:700; text-align:center; font-size:1.05rem; }
+
+    .prize-stage{ width:100%; display:flex; align-items:center; justify-content:center; padding:20px; background:linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,250,240,0.98)); border-radius:14px; box-shadow:0 12px 40px rgba(0,0,0,0.06); border: 1px solid rgba(255,215,0,0.16); }
+    .prize-img{ width:82%; max-width:680px; height:auto; border-radius:14px; box-shadow: 0 30px 80px rgba(0,0,0,0.22); object-fit:contain; display:block }
+
+    .claim-modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:2200; background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.85)); }
+    .claim-card { width:min(820px,92%); max-width:640px; padding:26px; border-radius:16px; background: linear-gradient(180deg,#fffaf2,#fff5e6); color:#5b3a02; box-shadow: 0 50px 140px rgba(0,0,0,0.6); border:2px solid rgba(255,215,0,0.18); }
+    .claim-card h3 { font-family:"Cinzel", serif; font-size:1.6rem; margin:0 0 8px 0; color:var(--gold1); }
+    .claim-card p { margin:0 0 14px 0; color:#6b3d02; font-weight:700; }
+    .field { display:flex; flex-direction:column; gap:8px; margin-bottom:14px; }
+    .field label { font-weight:800; font-size:0.95rem; color:#4b2b02; }
+    .field input[type="text"], .field input[type="tel"] { padding:12px 14px; border-radius:12px; border:1px solid rgba(0,0,0,0.08); font-size:1.05rem; }
+
+    .claim-actions{ display:flex; gap:14px; justify-content:center; margin-top:10px; }
+
+    .success-modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:2400; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.9)); }
+    .success-card { width:min(620px,92%); padding:22px; border-radius:14px; background: linear-gradient(180deg,#fffdf8,#fff8ea); color:#5b3a02; box-shadow:0 40px 120px rgba(0,0,0,0.6); text-align:center; }
+    .success-card h4 { font-family:"Cinzel",serif; color:var(--gold1); margin-bottom:10px; font-size:1.3rem; }
+    .success-card p { color:#70480f; margin-bottom:16px; }
+
+    .modal-btn {
+      padding:14px 26px;
+      border-radius:14px;
+      border:0;
+      cursor:pointer;
+      font-weight:800;
+      background: linear-gradient(135deg,var(--gold1),var(--gold2));
+      color: var(--deep);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.28);
+      transition: transform 220ms ease, box-shadow 220ms ease;
+    }
+    .modal-btn:hover{ transform:translateY(-4px); box-shadow: 0 26px 56px rgba(0,0,0,0.32) }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    }
+    @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(30px)} to { opacity:1; transform:translateY(0) } }
+
+    @media (max-width:1000px){
+      .grand-wrap{ max-width:860px }
+      .welcome-card h2{ font-size:2.6rem }
+      .congrats-card h2{ font-size:2.2rem }
+      .prize-img{ width:88% }
+    }
+    @media (max-width:600px){
+      .grand-wrap{ height:320px }
+      .welcome-card h2{ font-size:2.0rem }
+      .btn{ padding:12px 18px; min-height:54px }
+      .prize-img{ width:95% }
+    }
+  </style>
+</head>
+<body>
+  <div id="lanterns" aria-hidden="true"></div>
+
+  <main class="stage" role="main">
+    <section class="hero" aria-label="Diwali promotion">
+      <div class="grand-wrap" aria-hidden="false">
+        <img src="grand.png" alt="Grand prize" id="grandImg">
+        <div class="grand-glow-particles" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="progress" aria-hidden="false" aria-live="polite">
+        <div class="label">
+          <span>Progress to unlock</span>
+          <span id="progressText">0/10</span>
+        </div>
+        <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0">
+          <i id="barFill"></i>
+        </div>
+      </div>
+
+      <div class="actions" role="group" aria-label="Share and claim actions">
+        <button class="btn btn-share" id="shareBtn" aria-label="Share via system share or WhatsApp">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.52 3.48c-2.96-2.96-7.76-2.96-10.72 0-2.32 2.32-2.7 5.85-1.06 8.55L3 21l9.03-6.97c2.7 1.64 6.24 1.26 8.55-1.06 2.96-2.96 2.96-7.76 0-10.72z" stroke="#fff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="shareLabel">Share</span>
+        </button>
+
+        <button class="btn btn-claim btn-hidden" id="claimBtn" aria-hidden="true" aria-disabled="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l3 6h6l-4.8 3.5L20 20l-8-5-8 5 1.8-8.5L1 8h6l3-6z" stroke="#2b0202" stroke-width="0.6" stroke-linejoin="round"/></svg>
+          <span id="claimLabel">Claim</span>
+        </button>
+      </div>
+
+      <div class="small" id="statusText">Share 10 times to unlock the prize</div>
+    </section>
+  </main>
+
+  <!-- Welcome modal -->
+  <div class="welcome-modal" id="welcomeModal" role="dialog" aria-modal="true" aria-label="Welcome">
+    <div class="welcome-card" role="document">
+      <h2 id="welcomeTitle">Happy Diwali</h2>
+      <button class="welcome-close" id="closeWelcome" aria-label="Close welcome">Continue</button>
+    </div>
+  </div>
+
+  <!-- Share confirm modal (fallback) -->
+  <div class="share-confirm" id="shareConfirm" role="dialog" aria-modal="true" aria-label="Confirm share">
+    <div class="card">
+      <h3 style="margin:0;font-family:Cinzel,serif;color:var(--gold1);">Share with friends</h3>
+      <p id="shareConfirmText">WhatsApp was opened — when you've sent the message, tap "I shared". (Copying/linking won't auto-count.)</p>
+      <div class="actions">
+        <button class="modal-btn" id="confirmShared">I shared</button>
+        <button class="btn-copy" id="copyLink">Copy share text</button>
+        <button class="modal-btn" id="cancelShare" style="background:rgba(0,0,0,0.08);color:#000;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Congrats modal -->
+  <div class="congrats-modal" id="congratsModal" role="dialog" aria-modal="true" aria-label="Congratulations">
+    <div class="congrats-card" role="document" aria-live="polite">
+      <h2>Congratulations!</h2>
+      <div class="congrats-sub">You've unlocked your premium gift</div>
+      <div class="prize-stage" role="img" aria-label="Your premium prize">
+        <img src="prize.png" alt="Prize" class="prize-img" id="prizeImg">
+      </div>
+      <div style="display:flex;gap:14px;margin-top:8px">
+        <button class="modal-btn" id="enjoyBtn">Enjoy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Claim form modal -->
+  <div class="claim-modal" id="claimModal" role="dialog" aria-modal="true" aria-labelledby="claimTitle">
+    <div class="claim-card" role="document">
+      <h3 id="claimTitle">Enter details to claim</h3>
+      <p>Provide your name & phone number. If you win we will notify you.</p>
+      <form id="claimForm" novalidate>
+        <div class="field">
+          <label for="fullName">Full name</label>
+          <input id="fullName" name="fullName" type="text" autocomplete="name" placeholder="Your name" required>
+        </div>
+        <div class="field">
+          <label for="phone">Phone number</label>
+          <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="+91 9XXXXXXXXX" required>
+        </div>
+        <div class="claim-actions">
+          <button type="submit" class="modal-btn" id="submitClaim">Submit</button>
+          <button type="button" class="modal-btn" id="cancelClaim" style="background:rgba(0,0,0,0.08);color:#000;font-weight:800;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Success modal -->
+  <div class="success-modal" id="successModal" role="dialog" aria-modal="true" aria-labelledby="successTitle">
+    <div class="success-card" role="document">
+      <h4 id="successTitle">Successfully submitted</h4>
+      <p>Thank you — if you win we will notify you. Good luck!</p>
+      <button class="modal-btn" id="successOk">OK</button>
+    </div>
+  </div>
+
+  <div id="fx" aria-hidden="true"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  // Config
+  const TARGET = 10;
+  const STORAGE_KEY = 'diwali_shares_final_v3';
+  const WELCOME_KEY = 'diwali_welcome_shown_final_v3';
+  const CLAIMED_KEY = 'diwali_claimed_final_v3';
+  const PARTNER_URL = 'https://example.com/?utm_source=diwali_promo';
+
+  // DOM
+  const welcomeModal = document.getElementById('welcomeModal');
+  const closeWelcome = document.getElementById('closeWelcome');
+  const shareBtn = document.getElementById('shareBtn');
+  const shareLabel = document.getElementById('shareLabel');
+  const claimBtn = document.getElementById('claimBtn');
+  const claimLabelSpan = document.getElementById('claimLabel');
+  const progressText = document.getElementById('progressText');
+  const barFill = document.getElementById('barFill');
+  const statusText = document.getElementById('statusText');
+  const congratsModal = document.getElementById('congratsModal');
+  const enjoyBtn = document.getElementById('enjoyBtn');
+  const claimModal = document.getElementById('claimModal');
+  const cancelClaim = document.getElementById('cancelClaim');
+  const claimForm = document.getElementById('claimForm');
+  const successModal = document.getElementById('successModal');
+  const successOk = document.getElementById('successOk');
+
+  const shareConfirm = document.getElementById('shareConfirm');
+  const confirmShared = document.getElementById('confirmShared');
+  const cancelShare = document.getElementById('cancelShare');
+  const copyLinkBtn = document.getElementById('copyLink');
+
+  const fx = document.getElementById('fx');
+  const lanternsRoot = document.getElementById('lanterns');
+
+  // state
+  let shares = 0;
+  let shareWindow = null;
+  const activeIntervals = [];
+
+  // preload assets
+  (function preload(){
+    const imgs = ['background.png','grand.png','prize.png'];
+    imgs.forEach(src => { const i = new Image(); i.src = src; });
+  })();
+
+  // helpers: storage
+  function readState(){ try { shares = parseInt(localStorage.getItem(STORAGE_KEY),10) || 0; if (isNaN(shares)) shares=0; } catch(e){ shares=0; } }
+  function writeState(){ try{ localStorage.setItem(STORAGE_KEY, String(shares)); }catch(e){} }
+  function getClaimed(){ try{ return localStorage.getItem(CLAIMED_KEY) === '1'; }catch(e){return false} }
+  function setClaimed(){ try{ localStorage.setItem(CLAIMED_KEY,'1'); }catch(e){} }
+
+  // build text-only share message (no files)
+  function buildShareText(){
+    // message + page url (no file)
+    return `Happy Diwali! 🎉 Check this premium Diwali celebration and unlock a special gift:\n\n${location.href}\n\nWishing you a joyful festival!`;
+  }
+
+  // UI update
+  function updateUI(){
+    progressText.textContent = `${shares}/${TARGET}`;
+    const pct = Math.min(100, Math.round((shares/TARGET)*100));
+    barFill.style.width = pct + '%';
+    barFill.parentElement.setAttribute('aria-valuenow', String(shares));
+    statusText.textContent = (shares>=TARGET) ? 'Ready to claim — press Claim' : `Share ${Math.max(0,TARGET-shares)} more ${Math.max(0,TARGET-shares)===1? 'time':'times'}`;
+
+    const claimed = getClaimed();
+    if (shares >= TARGET){
+      claimBtn.classList.remove('btn-hidden');
+      claimBtn.setAttribute('aria-hidden','false');
+      if (claimed){
+        claimBtn.disabled = true;
+        claimBtn.setAttribute('aria-disabled','true');
+        claimLabelSpan.textContent = 'Claimed';
+      } else {
+        claimBtn.disabled = false;
+        claimBtn.setAttribute('aria-disabled','false');
+        claimLabelSpan.textContent = 'Claim';
+      }
+      if (shares === TARGET && !claimed) miniCelebration();
+    } else {
+      claimBtn.classList.add('btn-hidden');
+      claimBtn.setAttribute('aria-hidden','true');
+    }
+  }
+
+  // Welcome
+  function bootWelcome(){ if (!localStorage.getItem(WELCOME_KEY)) welcomeModal.style.display = 'flex'; else welcomeModal.style.display = 'none'; }
+  closeWelcome.addEventListener('click', ()=> { welcomeModal.style.display = 'none'; try{ localStorage.setItem(WELCOME_KEY,'1'); }catch(e){} });
+
+  // Share flow — strict: only award when navigator.share resolves OR user confirms in fallback
+  shareBtn.addEventListener('click', async ()=> {
+    if (shareBtn.disabled) return;
+    shareBtn.disabled = true;
+    try {
+      await openShareAndVerify();
+    } finally {
+      setTimeout(()=> { shareBtn.disabled = false; }, 900);
+    }
+  });
+
+  async function openShareAndVerify(){
+    const text = buildShareText();
+
+    // 1) Try Web Share API (text + url). If resolves -> award
+    if (navigator.share){
+      try {
+        await navigator.share({ title: 'Diwali Grand Celebration', text: text, url: location.href });
+        awardShare();
+        return;
+      } catch (err) {
+        // either user cancelled or API failed — fallback to WhatsApp flow
+      }
+    }
+
+    // 2) Fallback: auto-open WhatsApp (or web) and show a confirmation modal.
+    const waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    try {
+      shareWindow = window.open(waUrl, '_blank', 'noopener,noreferrer');
+    } catch(e){
+      // if popup blocked, replace location (user will navigate away)
+      try { window.location.href = waUrl; } catch(e) {}
+    }
+
+    // show confirmation modal — user must explicitly confirm they shared
+    shareConfirm.style.display = 'flex';
+    setTimeout(()=> confirmShared.focus(), 120);
+  }
+
+  // fallback confirm handlers
+  confirmShared.addEventListener('click', ()=> {
+    shareConfirm.style.display = 'none';
+    try { if (shareWindow && !shareWindow.closed) shareWindow.close(); } catch(e){}
+    awardShare();
+  });
+
+  cancelShare.addEventListener('click', ()=> {
+    shareConfirm.style.display = 'none';
+    try { if (shareWindow && !shareWindow.closed) shareWindow.focus(); } catch(e){}
+  });
+
+  copyLinkBtn.addEventListener('click', async ()=>{
+    const text = buildShareText();
+    try {
+      await navigator.clipboard.writeText(text);
+      copyLinkBtn.textContent = 'Copied ✓';
+      setTimeout(()=> { copyLinkBtn.textContent = 'Copy share text'; }, 1200);
+    } catch(e){
+      const res = prompt('Copy this share text:', text);
+      if (res === null) return;
+    }
+  });
+
+  // Award share only via verified flows
+  function awardShare(){
+    if (shares >= TARGET) return;
+    shares = Math.min(TARGET, shares + 1);
+    writeState();
+    updateUI();
+    animateShareFeedback();
+  }
+
+  // small visual feedback
+  function animateShareFeedback(){
+    shareLabel.textContent = 'Shared ✓';
+    try{ shareBtn.animate([{transform:'scale(1)'},{transform:'scale(.98)'},{transform:'scale(1)'}], {duration:260, easing:'ease-out'}); } catch(e){}
+    setTimeout(()=> { shareLabel.textContent = 'Share'; }, 1200);
+  }
+
+  // Claim flow
+  claimBtn.addEventListener('click', ()=> {
+    if (getClaimed()) return;
+    try { window.open(PARTNER_URL, '_blank'); } catch(e){}
+    setTimeout(()=> { showCongrats(); }, 700);
+  });
+
+  function showCongrats(){
+    congratsModal.classList.add('active');
+    rocketBoom();
+    setTimeout(()=> launchFireworksSequence(6), 420);
+  }
+
+  enjoyBtn.addEventListener('click', ()=> { congratsModal.classList.remove('active'); openClaimForm(); });
+
+  function openClaimForm(){ claimModal.style.display = 'flex'; const n = document.getElementById('fullName'); if (n) setTimeout(()=> n.focus(), 120); }
+  cancelClaim.addEventListener('click', ()=> { claimModal.style.display = 'none'; });
+
+  // Claim submit (local demo store)
+  claimForm.addEventListener('submit', (e)=> {
+    e.preventDefault();
+    const name = (document.getElementById('fullName').value || '').trim();
+    const phone = (document.getElementById('phone').value || '').trim();
+    if (!name || name.length < 2){ alert('Please enter your name'); document.getElementById('fullName').focus(); return; }
+    const digits = phone.replace(/\D/g,'');
+    if (digits.length < 7 || digits.length > 15){ alert('Please enter a valid phone number'); document.getElementById('phone').focus(); return; }
+
+    try {
+      const arr = JSON.parse(localStorage.getItem('diwali_submissions_v3') || '[]');
+      arr.push({name, phone, ts: Date.now()});
+      localStorage.setItem('diwali_submissions_v3', JSON.stringify(arr));
+    } catch(e){ /* ignore */ }
+
+    setClaimed();
+    claimBtn.disabled = true;
+    claimLabelSpan.textContent = 'Claimed';
+    claimBtn.setAttribute('aria-disabled','true');
+
+    claimModal.style.display = 'none';
+    successModal.style.display = 'flex';
+  });
+
+  successOk.addEventListener('click', ()=> { successModal.style.display = 'none'; });
+
+  // Mini celebration (small)
+  function miniCelebration(){
+    rocketBoom(true);
+    setTimeout(()=> createConfettiBurst(30, true), 220);
+    setTimeout(()=> launchFireworksSequence(6), 260);
+  }
+
+  /* Confetti & fireworks (kept limited for low-lag) */
+  function createConfettiPiece(opts = {}) {
+    const c = document.createElement('div');
+    c.className = 'confetti-piece';
+    const size = opts.size || (6 + Math.random()*8);
+    Object.assign(c.style, {
+      position: 'fixed',
+      left: (opts.left || (20 + Math.random()*60)) + 'vw',
+      top: (opts.top || -10) + 'px',
+      width: size + 'px',
+      height: size + 'px',
+      backgroundColor: opts.color || randomColor(),
+      transform: `rotate(${Math.random()*360}deg)`,
+      zIndex: 2600,
+      borderRadius: '2px',
+      pointerEvents: 'none',
+      opacity: '1',
+      transition: `transform ${opts.duration || 1200}ms linear, top ${opts.duration || 1200}ms linear, opacity 600ms linear ${ (opts.duration||1200) - 700 }ms`
+    });
+    document.body.appendChild(c);
+    requestAnimationFrame(()=> {
+      c.style.top = (window.innerHeight * (0.55 + Math.random()*0.35)) + 'px';
+      c.style.transform = `rotate(${Math.random()*720}deg) translateX(${(Math.random()*120 - 60)}px)`;
+      setTimeout(()=> { c.style.opacity = '0'; }, (opts.duration || 1200) - 400);
+    });
+    setTimeout(()=> { if (c.parentNode) c.parentNode.removeChild(c); }, (opts.duration || 1200) + 300);
+  }
+
+  function createConfettiBurst(count = 40, mini = false){
+    for (let i=0;i<count;i++){
+      setTimeout(()=> createConfettiPiece({ size: mini?6: (6 + Math.random()*8), duration: (mini?900: 1200) + Math.random()*400 }), Math.random()*500);
+    }
+  }
+
+  function randomColor(){ const colors = ['#FFD700','#FFA500','#FF6347','#32CD32','#1E90FF','#8A2BE2']; return colors[Math.floor(Math.random()*colors.length)]; }
+
+  function createFirework(xPct, yPct, color){
+    const f = document.createElement('div');
+    f.className = 'firework-burst';
+    const px = Math.max(6, Math.min(94, xPct))+'vw';
+    const py = Math.max(8, Math.min(88, yPct))+'vh';
+    Object.assign(f.style, {
+      position: 'fixed',
+      left: px,
+      top: py,
+      width: '8px',
+      height: '8px',
+      borderRadius: '50%',
+      transform: 'translate(-50%, -50%) scale(0.08)',
+      pointerEvents: 'none',
+      zIndex: 2602,
+      background: color,
+      boxShadow: `0 0 12px 6px ${color}, 0 0 36px 12px ${color}`,
+      opacity: '1',
+      transition: 'transform 700ms cubic-bezier(.2,.7,.2,1), opacity 700ms linear'
+    });
+    document.body.appendChild(f);
+    requestAnimationFrame(()=> {
+      f.style.transform = 'translate(-50%, -50%) scale(10)';
+      f.style.opacity = '0';
+    });
+    setTimeout(()=> { if (f.parentNode) f.parentNode.removeChild(f); }, 900);
+  }
+
+  function createFireworks(count=8){
+    for (let i=0;i<count;i++){
+      setTimeout(()=> {
+        const x = 20 + Math.random()*60;
+        const y = 18 + Math.random()*50;
+        createFirework(x,y, randomColor());
+        for (let j=0;j<6;j++){
+          setTimeout(()=> { createConfettiPiece({ left: (x + (Math.random()*12-6)) , top: (y/100)*window.innerHeight + 8 , color: randomColor(), duration: 900 + Math.random()*400}); }, Math.random()*200);
+        }
+      }, i * 140 + Math.random()*160);
+    }
+  }
+
+  function launchFireworksSequence(shortCount){
+    const c = shortCount || 8;
+    createFireworks(c);
+    setTimeout(()=> createConfettiBurst(60), 300);
+  }
+
+  function clearFx(){ document.querySelectorAll('.confetti-piece, .firework-burst, .rocket-burst').forEach(n => n.remove()); }
+
+  /* Rocket boom effect */
+  function rocketBoom(small){
+    const scale = small ? 10 : 18;
+    const duration = small ? 520 : 720;
+    const burst = document.createElement('div');
+    burst.className = 'rocket-burst';
+    burst.style.left = '50%';
+    burst.style.top = '42%';
+    burst.style.zIndex = 2605;
+    const core = document.createElement('div');
+    core.className = 'core';
+    burst.appendChild(core);
+    document.body.appendChild(burst);
+
+    burst.style.transition = `transform ${duration}ms cubic-bezier(.2,.9,.2,1), opacity ${duration}ms linear`;
+    requestAnimationFrame(()=> {
+      burst.style.transform = `translate(-50%,-50%) scale(${scale})`;
+      burst.style.opacity = '0';
+    });
+
+    setTimeout(()=> { if (burst.parentNode) burst.parentNode.removeChild(burst); }, duration + 60);
+  }
+
+  /* Lanterns (optional ambient) */
+  const lanternCount = 6;
+  const lanternSpawnInterval = 1600;
+  let lanternTimer = null;
+
+  function createLantern(initialXPct, durationMs){
+    const el = document.createElement('div');
+    el.className = 'lantern';
+    const xShift = (Math.random() * 24 - 12) + 'vw';
+    const left = initialXPct + (Math.random()*8 - 4);
+    el.style.left = Math.max(4, Math.min(96, left)) + 'vw';
+    el.style.setProperty('--x-shift', xShift);
+    const dur = durationMs || (12000 + Math.random() * 9000);
+    el.style.animation = `lanternFloat ${dur}ms linear forwards`;
+    el.style.animationDelay = '80ms';
+    el.style.opacity = '0';
+    el.innerHTML = `<div class="body" aria-hidden="true"><div class="flame" aria-hidden="true"></div><div class="neck" aria-hidden="true"></div></div>`;
+    lanternsRoot.appendChild(el);
+    const removeAfter = setTimeout(()=> { if (el && el.parentNode) el.parentNode.removeChild(el); }, dur + 600);
+    activeIntervals.push(removeAfter);
+  }
+
+  function startLanterns(){
+    if ( window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ) return;
+    for (let i=0;i<lanternCount;i++){
+      setTimeout(()=> createLantern(6 + i*(88/lanternCount), 12000 + Math.random()*10000), i*450);
+    }
+    lanternTimer = setInterval(()=> { createLantern(Math.random()*86 + 6, 12000 + Math.random()*10000); }, lanternSpawnInterval);
+    activeIntervals.push(lanternTimer);
+  }
+
+  function stopLanterns(){ if (lanternTimer) { clearInterval(lanternTimer); lanternTimer = null; } lanternsRoot.innerHTML = ''; }
+
+  /* Boot */
+  function boot(){
+    readState();
+    updateUI();
+    bootWelcome();
+    // optional: don't start lanterns to reduce effects on low-end devices
+    // startLanterns();
+  }
+
+  document.addEventListener('keydown', (e)=> {
+    if (e.key === 'Escape'){
+      if (welcomeModal.style.display !== 'none') { welcomeModal.style.display = 'none'; try{ localStorage.setItem(WELCOME_KEY,'1'); }catch(e){} }
+      if (congratsModal.classList.contains('active')) { congratsModal.classList.remove('active'); clearFx(); }
+      if (claimModal.style.display === 'flex') { claimModal.style.display = 'none'; }
+      if (successModal.style.display === 'flex') { successModal.style.display = 'none'; }
+      if (shareConfirm.style.display === 'flex') { shareConfirm.style.display = 'none'; }
+    }
+  });
+
+  window.addEventListener('beforeunload', ()=>{ activeIntervals.forEach(i => { try { clearInterval(i); clearTimeout(i); } catch(e){} }); });
+
+  boot();
+
+  // expose small debug helpers
+  window.__diwali = {
+    awardShareManual: function(){ awardShare(); },
+    getShares: () => shares,
+    isClaimed: () => getClaimed()
+  };
+
+  // local awardShare used by console too
+  function awardShare(){
+    if (shares >= TARGET) return;
+    shares = Math.min(TARGET, shares + 1);
+    writeState();
+    updateUI();
+    animateShareFeedback();
+  }
+})();
+</script>
+</body>
+</html>
